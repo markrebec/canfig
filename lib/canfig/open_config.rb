@@ -1,11 +1,12 @@
 module Canfig
   class OpenConfig < Config
-    def allowed?(opt)
-      true
+    def set(key, val)
+      super(key, val)
+      @allowed << key unless @allowed.include?(key)
     end
 
-    def to_h
-      @state.to_h
+    def allowed?(opt)
+      true
     end
   end
 end

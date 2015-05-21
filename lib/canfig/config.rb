@@ -47,7 +47,7 @@ module Canfig
     end
 
     def changed
-      Hash[@state.map { |key,val| [key, [@saved_state[key], val]] if @saved_state[key] != val }.compact]
+      Hash[@allowed.map { |key| [key, [@saved_state[key], @state[key]]] if @saved_state[key] != @state[key] }.compact]
     end
 
     def changed?(key)
