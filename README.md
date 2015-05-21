@@ -6,7 +6,14 @@
 [![Gem Version](https://badge.fury.io/rb/canfig.png)](http://badge.fury.io/rb/canfig)
 [![Dependency Status](https://gemnasium.com/markrebec/canfig.png)](https://gemnasium.com/markrebec/canfig)
 
-Dead simple canned configuration for gems or whatever.
+Dead simple canned configuration for gems or whatever. It allows users of your gems (or whatever) to configure behavior using a familiar syntax (maybe in a rails config initializer, for example).
+
+```ruby
+MyGem.configure do |config|
+  config.foo = 'bar'
+  config.enable_thingy!
+end
+```
 
 ## Getting Started
 
@@ -74,7 +81,7 @@ module MyGem
 end
 ```
 
-Users of your gem could then configure it with `MyGem.configure`, for example in a rails initializer.
+Users of your gem could then configure it with `MyGem.configure`.
 
 ```ruby
 MyGem.configure do |config|
