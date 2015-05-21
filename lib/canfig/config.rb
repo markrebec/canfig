@@ -43,7 +43,7 @@ module Canfig
     end
 
     def to_h
-      @state.dup
+      Hash[@allowed.map { |key| [key, @state[key]] }]
     end
 
     def changed
