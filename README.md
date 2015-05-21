@@ -38,7 +38,7 @@ conf = Canfig::Config.new(:foo, :bar, baz: 123) # combination of the two
 Then you can use that object to allow further configuration of the allowed option keys with a hash or block.
 
 ```ruby
-conf = Canfig::Config.new(:foo, :bar, :baz)
+conf = Canfig.new(:foo, :bar, :baz) # shortcut for Canfig::Config.new
 
 conf.configure(foo: 'abc', bar: 123) # with a hash
 
@@ -58,7 +58,7 @@ Only the option keys provided when initializing the configuration object can be 
 If you want your configuration object to be more flexible, you can use `Canfig::OpenConfig` which allows dynamically setting and getting option keys (similar to an `OpenStruct`).
 
 ```ruby
-conf = Canfig::OpenConfig.new
+conf = Canfig.open # or Canfig::OpenConfig.new
 
 conf.configure foo: 'abc' do |config| # you can set whatever you want
   config.bar = 123
@@ -71,7 +71,7 @@ end
 The current state is saved everytime the options are altered, which allows you to grab a hash of changed attributes.
 
 ```ruby
-conf = Canfig::Config.new(:foo, :bar, baz: 'abc')
+conf = Canfig.new(:foo, :bar, baz: 'abc')
 
 conf.configure foo: 'abc' do |config| # or with both
   config.baz = 123
@@ -89,7 +89,7 @@ Canfig becomes particularly useful when you need to allow configuration of a cla
 ```ruby
 module MyGem
   mattr_reader :configuration
-  @@configuration = Canfig::Config.new(:foo, :bar, :baz)
+  @@configuration = Canfig.new(:foo, :bar, :baz)
 
   def self.configure(&block)
     @@configuration.configure &block
