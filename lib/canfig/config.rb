@@ -2,7 +2,6 @@ module Canfig
   class Config
 
     def configure(argh={}, &block)
-      @options ||= {}
       save_state! do
         configure_with_args argh
         configure_with_block &block
@@ -12,7 +11,7 @@ module Canfig
 
     def configure_with_args(argh)
       save_state! do
-        argh.symbolize_keys.each { |key,val| configure_option(key, val) }
+        argh.symbolize_keys.each { |key,val| set(key, val) }
       end
     end
 
@@ -22,19 +21,33 @@ module Canfig
       end
     end
 
-    def configure_option(key, val)
-      raise ArgumentError, "#{key} is not an allowed configuration option" unless allowed?(key)
+    def set(key, val)
+      raise NoMethodError, "undefined method `#{key.to_s}=' for #{self.to_s}" unless allowed?(key)
 
       save_state! do
-        @changed[key] = [@options[key], val]
-        @options[key] = val
+        @state[key] = val
       end
     end
 
+    def []=(key, val)
+      set key, val
+    end
+
+    def get(key)
+      raise NoMethodError, "undefined method `#{key.to_s}' for #{self.to_s}" unless allowed?(key)
+      @state[key]
+    end
+
+    def [](key)
+      get key
+    end
+
+    def to_h
+      @state.dup
+    end
+
     def changed
-      @changed = {}
-      @options.each { |key,val| @changed[key] = [@saved_state[key], val] if @saved_state[key] != val }
-      @changed
+      Hash[@state.map { |key,val| [key, [@saved_state[key], val]] if @saved_state[key] != val }.compact]
     end
 
     def changed?(key)
@@ -43,8 +56,7 @@ module Canfig
 
     def save_state!(&block)
       if save_state?
-        @saved_state = @options.dup
-        @changed = {}
+        @saved_state = to_h
 
         if block_given?
           disable_state_saves!
@@ -78,9 +90,9 @@ module Canfig
     def method_missing(meth, *args, &block)
       if meth.to_s.match(/=\Z/)
         opt = meth.to_s.gsub(/=/,'').to_sym
-        return configure_option(opt, args.first) if allowed?(meth)
+        return set(opt, args.first) if allowed?(meth)
       else
-        return @options[meth] if allowed?(meth)
+        return @state[meth] if allowed?(meth)
       end
 
       super
@@ -90,7 +102,8 @@ module Canfig
 
     def initialize(*args, &block)
       options = args.extract_options!
-      @allowed = options.symbolize_keys.keys
+      @allowed = (args + options.symbolize_keys.keys).uniq
+      @state = {}
       enable_state_saves!
       configure options, &block
     end
