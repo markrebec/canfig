@@ -102,7 +102,7 @@ module Canfig
 
     def initialize(*args, &block)
       options = args.extract_options!
-      @allowed = (args + options.symbolize_keys.keys).uniq
+      @allowed = (args + options.symbolize_keys.keys).uniq.map(&:to_sym)
       @state = {}
       enable_state_saves!
       configure options, &block
