@@ -65,6 +65,7 @@ Canfig becomes particularly useful when you need to allow configuration of a cla
 
 ```ruby
 module MyGem
+  mattr_reader :configuration
   @@configuration = Canfig::Config.new(:foo, :bar, :baz)
 
   def self.configure(&block)
