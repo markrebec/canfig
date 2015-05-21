@@ -66,6 +66,18 @@ conf.configure foo: 'abc' do |config| # you can set whatever you want
 end
 ```
 
+The current state is saved everytime the options are altered, which allows you to grab a hash of changed attributes.
+
+```ruby
+conf = Canfig::Config.new(:foo, :bar, baz: 'abc')
+
+conf.configure foo: 'abc' do |config| # or with both
+  config.baz = 123
+end
+
+conf.changed # {foo: [nil, 'abc'], baz: ['abc', 123]}
+```
+
 This pattern isn't all that powerful on it's own, and you might be thinking "why wouldn't I just use a Hash or an OpenStruct?"
 
 Canfig becomes particularly useful when you need to allow configuration of a class or module that will be used in different environments and scenarios (like a ruby gem).
