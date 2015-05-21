@@ -8,4 +8,11 @@ require 'canfig/class'
 require 'canfig/instance'
 
 module Canfig
+  def self.new(*args, &block)
+    Canfig::Config.new *args, &block
+  end
+
+  def self.open(*args, &block)
+    Canfig::OpenConfig.new *args, &block
+  end
 end
