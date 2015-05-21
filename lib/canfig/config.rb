@@ -1,5 +1,5 @@
 module Canfig
-  class Configuration
+  class Config
 
     def configure(argh={}, &block)
       @options ||= {}
@@ -23,7 +23,7 @@ module Canfig
     end
 
     def configure_option(key, val)
-      raise ArgumentError, "#{key} is not an allowed configuration option" unless @allowed.include?(key)
+      raise ArgumentError, "#{key} is not an allowed configuration option" unless allowed?(key)
 
       save_state! do
         @changed[key] = [@options[key], val]
@@ -71,12 +71,16 @@ module Canfig
       @save_state
     end
 
+    def allowed?(opt)
+      @allowed.include?(opt)
+    end
+
     def method_missing(meth, *args, &block)
       if meth.to_s.match(/=\Z/)
         opt = meth.to_s.gsub(/=/,'').to_sym
-        return configure_option(opt, args.first) if @allowed.include?(opt)
+        return configure_option(opt, args.first) if allowed?(meth)
       else
-        return @options[meth] if @allowed.include?(meth)
+        return @options[meth] if allowed?(meth)
       end
 
       super
