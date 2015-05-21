@@ -136,6 +136,22 @@ end
 conf = CustomConfig.new # :foo => nil, :bar => nil, :baz => 'abc'
 ```
 
+You can also define custom helpers to set groups of configuration options (or do anything else, really).
+
+```ruby
+class DeveloperConfig < Canfig::OpenConfig
+  def enter_beast_mode!
+    set :headphones, :on
+    set :status, 'do_not_disturb'
+  end
+end
+
+conf = DeveloperConfig.new
+conf.configure do |config|
+  config.enter_beast_mode!
+end
+```
+
 ## Contributing
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
