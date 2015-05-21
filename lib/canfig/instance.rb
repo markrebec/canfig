@@ -1,5 +1,5 @@
 module Canfig
-  module Object
+  module Instance
     def configuration
       @configuration ||= Canfig::OpenConfig.new
     end

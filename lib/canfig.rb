@@ -5,7 +5,7 @@ require 'canfig/config'
 require 'canfig/open_config'
 require 'canfig/module'
 require 'canfig/class'
-require 'canfig/object'
+require 'canfig/instance'
 
 module Canfig
 end
