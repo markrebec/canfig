@@ -90,7 +90,7 @@ module Canfig
     def method_missing(meth, *args, &block)
       if meth.to_s.match(/=\Z/)
         opt = meth.to_s.gsub(/=/,'').to_sym
-        return set(opt, args.first) if allowed?(meth)
+        return set(opt, args.first) if allowed?(opt)
       else
         return @state[meth] if allowed?(meth)
       end
