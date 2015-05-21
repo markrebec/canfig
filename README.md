@@ -66,6 +66,8 @@ conf.configure foo: 'abc' do |config| # you can set whatever you want
 end
 ```
 
+### Getting Changes
+
 The current state is saved everytime the options are altered, which allows you to grab a hash of changed attributes.
 
 ```ruby
@@ -77,6 +79,8 @@ end
 
 conf.changed # {foo: [nil, 'abc'], baz: ['abc', 123]}
 ```
+
+### Configuring Gems
 
 This pattern isn't all that powerful on it's own, and you might be thinking "why wouldn't I just use a Hash or an OpenStruct?"
 
@@ -114,6 +118,8 @@ module MyGem
 end
 ```
 
+### Quick Mixins
+
 Canfig also comes with some easy-to-use mixins for modules, classes and instances that provide a `configuration` module/class/instance variable and a `configure` module/class/instance method (similar to the gem example above).
 
 ```ruby
@@ -140,7 +146,7 @@ object.configuration # <Canfig::OpenConfig>
 object.configure { |config| config.foo = 'abc' }
 ```
 
-## Custom Configs
+### Custom Configs
 
 You can create your own custom configuration classes by extending either `Canfig::Config` or `Canfig::OpenConfig` as appropriate, and defining/overriding any additional functionality you need. One handy trick is to override `initialize` to set default keys/values without requiring them to be passed in every time.
 
