@@ -59,7 +59,9 @@ conf.configure foo: 'abc' do |config| # you can set whatever you want
 end
 ```
 
-This pattern isn't all that powerful on it's own, and you might be thinking "why wouldn't I just use a Hash or an OpenStruct?" but canfig is particularly useful when you need to allow configuration of a class or module that will be used in different environments and scenarios (like a ruby gem).
+This pattern isn't all that powerful on it's own, and you might be thinking "why wouldn't I just use a Hash or an OpenStruct?"
+
+Canfig becomes particularly useful when you need to allow configuration of a class or module that will be used in different environments and scenarios (like a ruby gem).
 
 ```ruby
 module MyGem
@@ -77,6 +79,18 @@ Users of your gem could then configure it with `MyGem.configure`, for example in
 MyGem.configure do |config|
   config.foo = 'abc'
   config.bar = 123
+end
+```
+
+And you could check the configured options to control behavior within your gem.
+
+```ruby
+module MyGem
+  class MyClass
+    def do_foo?
+      MyGem.configuration.foo == true
+    end
+  end
 end
 ```
 
