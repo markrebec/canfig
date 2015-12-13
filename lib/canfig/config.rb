@@ -1,12 +1,19 @@
 module Canfig
   class Config
 
-    def configure(argh={}, &block)
+    def configure(argh={}, file=nil, &block)
       save_state! do
+        configure_with_file file unless file.nil?
         configure_with_args argh
         configure_with_block &block
       end
       self
+    end
+
+    def configure_with_file(file)
+      save_state! do
+        configure_with_args(Canfig::YAML.new(file).load)
+      end
     end
 
     def configure_with_args(argh)
