@@ -3,7 +3,7 @@ require 'active_support/core_ext/module/attribute_accessors'
 module Canfig
   module Module
     def self.included(base)
-      base.send :cattr_reader, :configuration
+      base.send :mattr_reader, :configuration
       base.send :class_variable_set, :@@configuration, Canfig::OpenConfig.new
       base.send :extend, ClassMethods
     end
