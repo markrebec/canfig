@@ -5,7 +5,7 @@ module Canfig
     end
 
     def configure(&block)
-      @configuration.configure &block
+      configuration.configure &block
     end
   end
 end
