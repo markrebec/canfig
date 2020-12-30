@@ -2,9 +2,12 @@ module Canfig
   class EnvConfig < OpenConfig
     attr_reader :namespace
 
-    def initialize(namespace=nil, **options, &block)
+    def initialize(namespace=nil, **attributes, &block)
       @namespace = namespace ? "#{namespace.to_s.underscore.upcase.gsub(/_$/, '')}_" : namespace
-      super(**options, &block)
+      super(*attributes.keys, &block)
+      attributes.each do |key,val|
+        env(key, val)
+      end
     end
 
     def get(key, default=nil, &block)
@@ -12,9 +15,12 @@ module Canfig
     end
 
     def env(key, default=nil, &block)
-      key = key.to_s.underscore.upcase
-      key = key.gsub(/^#{namespace}/, '') if namespace
-      super("#{namespace}#{key}", default, &block)
+      @state[key.to_sym] ||= begin
+        key = key.to_s.underscore.upcase
+        key = key.gsub(/^#{namespace}/, '') if namespace
+        val = ENV.fetch("#{namespace}#{key}", default, &block)
+        val && ENV.key?(val.to_s) ? env(val, default, &block) : val
+      end
     end
   end
 end
