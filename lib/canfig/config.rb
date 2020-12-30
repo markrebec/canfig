@@ -37,8 +37,10 @@ module Canfig
     end
 
     def env(key, default=nil, &block)
-      val = ENV.fetch(key.to_s.underscore.upcase, default, &block)
-      val && ENV.key?(val) ? env(val, default, &block) : val
+      @state[key] ||= begin
+        val = ENV.fetch(key.to_s.underscore.upcase, default, &block)
+        val && ENV.key?(val) ? env(val, default, &block) : val
+      end
     end
 
     def clear(*keys)
@@ -53,7 +55,7 @@ module Canfig
 
     def get(key, default=nil, &block)
       raise NoMethodError, "undefined method `#{key.to_s}' for #{self.to_s}" unless allowed?(key)
-      @state[key] ||= env(key, default, &block)
+      @state[key] || (block_given? ? yield : default)
     end
 
     def [](key)

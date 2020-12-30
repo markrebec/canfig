@@ -7,8 +7,8 @@ module Canfig
       super(**options, &block)
     end
 
-    def set(key, val)
-      raise NotImplementedError, "You cannot set values on a Canfig::EnvConfig"
+    def get(key, default=nil, &block)
+      super || env(key, default, &block)
     end
 
     def env(key, default=nil, &block)
