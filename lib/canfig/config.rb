@@ -36,13 +36,24 @@ module Canfig
       end
     end
 
+    def env(key, default=nil, &block)
+      val = ENV.fetch(key.to_s.underscore.upcase, default, &block)
+      val && ENV.key?(val) ? env(val, default, &block) : val
+    end
+
+    def clear(key)
+      save_state! do
+        @state[key] = nil
+      end
+    end
+
     def []=(key, val)
       set key, val
     end
 
-    def get(key)
+    def get(key, default=nil, &block)
       raise NoMethodError, "undefined method `#{key.to_s}' for #{self.to_s}" unless allowed?(key)
-      @state[key]
+      @state[key] ||= env(key, default, &block)
     end
 
     def [](key)
@@ -99,7 +110,7 @@ module Canfig
         opt = meth.to_s.gsub(/=/,'').to_sym
         return set(opt, args.first) if allowed?(opt)
       else
-        return @state[meth] if allowed?(meth)
+        return get(meth, *args, &block) if allowed?(meth)
       end
 
       super
