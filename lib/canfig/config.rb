@@ -41,9 +41,9 @@ module Canfig
       val && ENV.key?(val) ? env(val, default, &block) : val
     end
 
-    def clear(key)
+    def clear(*keys)
       save_state! do
-        @state[key] = nil
+        keys.each { |key| @state[key] = nil }
       end
     end
 
@@ -118,8 +118,7 @@ module Canfig
 
     protected
 
-    def initialize(*args, &block)
-      options = args.extract_options!
+    def initialize(*args, **options, &block)
       @allowed = (args.map(&:to_sym) + options.symbolize_keys.keys).uniq
       @state = {}
       enable_state_saves!
