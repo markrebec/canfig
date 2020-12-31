@@ -39,6 +39,7 @@ module Canfig
     def env(key, default=nil, &block)
       @state[key] ||= begin
         val = ENV.fetch(key.to_s.underscore.upcase, default, &block)
+        val = default if val.blank?
         val && ENV.key?(val.to_s) ? env(val, default, &block) : val
       end
     end

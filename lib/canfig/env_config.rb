@@ -17,6 +17,7 @@ module Canfig
         key = key.to_s.underscore.upcase
         key = key.gsub(/^#{namespace}/, '') if namespace
         val = ENV.fetch("#{namespace}#{key}", default, &block)
+        val = default if val.blank?
         val && ENV.key?(val.to_s) ? env(val, default, &block) : val
       end
     end
