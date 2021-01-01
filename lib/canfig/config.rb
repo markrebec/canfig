@@ -40,7 +40,9 @@ module Canfig
       @state[key] ||= begin
         val = ENV.fetch(key.to_s.underscore.upcase, default, &block)
         val = default if val.blank?
-        val && ENV.key?(val.to_s) ? env(val, default, &block) : val
+        val = env(val, default, &block) if val && ENV.key?(val.to_s)
+        val = eval(val) if val == 'true' || val == 'false'
+        val
       end
     end
 
