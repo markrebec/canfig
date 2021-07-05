@@ -28,16 +28,26 @@ module Canfig
       end
     end
 
+    def thread_configs
+      Thread.current[:_canfig_configs] ||= {}
+      Thread.current[:_canfig_configs]
+    end
+
+    def state
+      thread_configs[object_id] ||= {}
+      thread_configs[object_id]
+    end
+
     def set(key, val)
       raise NoMethodError, "undefined method `#{key.to_s}=' for #{self.to_s}" unless allowed?(key)
 
       save_state! do
-        @state[key] = val
+        state[key] = val
       end
     end
 
     def env(key, default=nil, &block)
-      @state[key] ||= begin
+      state[key] ||= begin
         val = ENV.fetch(key.to_s.underscore.upcase, default, &block)
         val = default if val.blank?
         val = env(val, default, &block) if val && ENV.key?(val.to_s)
@@ -48,7 +58,7 @@ module Canfig
 
     def clear(*keys)
       save_state! do
-        keys.each { |key| @state[key] = nil }
+        keys.each { |key| state[key] = nil }
       end
     end
 
@@ -58,7 +68,7 @@ module Canfig
 
     def get(key, default=nil, &block)
       raise NoMethodError, "undefined method `#{key.to_s}' for #{self.to_s}" unless allowed?(key)
-      @state[key] || (block_given? ? yield : default)
+      state[key] || (block_given? ? yield : default)
     end
 
     def [](key)
@@ -66,11 +76,11 @@ module Canfig
     end
 
     def to_h
-      Hash[@allowed.map { |key| [key, @state[key]] }]
+      Hash[@allowed.map { |key| [key, state[key]] }]
     end
 
     def changed
-      Hash[@allowed.map { |key| [key, [@saved_state[key], @state[key]]] if @saved_state[key] != @state[key] }.compact]
+      Hash[@allowed.map { |key| [key, [@saved_state[key], state[key]]] if @saved_state[key] != state[key] }.compact]
     end
 
     def changed?(key)
@@ -125,7 +135,6 @@ module Canfig
 
     def initialize(*args, **options, &block)
       @allowed = (args.map(&:to_sym) + options.symbolize_keys.keys).uniq
-      @state = {}
       enable_state_saves!
       configure options, &block
     end
