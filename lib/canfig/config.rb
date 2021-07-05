@@ -68,7 +68,9 @@ module Canfig
 
     def get(key, default=nil, &block)
       raise NoMethodError, "undefined method `#{key.to_s}' for #{self.to_s}" unless allowed?(key)
-      state[key] || (block_given? ? yield : default)
+      state_val = state[key]
+      return (block_given? ? yield : default) if state_val.nil?
+      state_val
     end
 
     def [](key)
